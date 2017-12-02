@@ -24,6 +24,8 @@ func main() {
 			fmt.Printf("Reverse Captcha for %s is %d\n", args[2], ReverseCaptchaHalfway(args[2]))
 		case 3:
 			fmt.Printf("Checksum for input spreadsheet is %d\n", SpreadsheetChecksum(args[2]))
+		case 4:
+			fmt.Printf("Divisible sum for input spreadsheet is %d\n", SpreadsheetDivisibleSum(args[2]))
 		default:
 			fmt.Println("Not done yet.")
 		}
@@ -87,6 +89,41 @@ func SpreadsheetChecksum(filename string) int {
 		}
 		sort.Ints(ints)
 		sum += (ints[len(ints)-1] - ints[0])
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return sum
+}
+
+//SpreadsheetDivisibleSum returns the sum of the integer division of two elements in each spreadsheet row
+func SpreadsheetDivisibleSum(filename string) int {
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	sum := 0
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.Fields(scanner.Text())
+		ints := make([]int, len(line))
+		for i, s := range line {
+			ints[i], _ = strconv.Atoi(s)
+		}
+		sort.Ints(ints)
+		for dx := len(ints) - 1; dx > 0; dx-- {
+			for dy := 0; dy < len(ints)-1; dy++ {
+				if dx != dy && ints[dx]%ints[dy] == 0 {
+					sum += ints[dx] / ints[dy]
+					break
+				}
+			}
+		}
 		fmt.Println(ints, sum)
 	}
 

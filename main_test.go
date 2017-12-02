@@ -59,3 +59,10 @@ func TestSpreadsheetChecksum(t *testing.T) {
 		t.Errorf("Expected output of 18 but got %d", o)
 	}
 }
+
+func TestSpreadsheetDivisibleSum(t *testing.T) {
+	o := SpreadsheetDivisibleSum("day2_2_test.txt")
+	if o != 9 {
+		t.Errorf("Expected output of 9 but got %d", o)
+	}
+}
