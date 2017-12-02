@@ -52,3 +52,10 @@ func TestReverseCaptchaHalfway(t *testing.T) {
 		t.Errorf("Expected output of 4 but got %d", o5)
 	}
 }
+
+func TestSpreadsheetChecksum(t *testing.T) {
+	o := SpreadsheetChecksum("day2_1_test.txt")
+	if o != 18 {
+		t.Errorf("Expected output of 18 but got %d", o)
+	}
+}

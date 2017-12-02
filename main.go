@@ -1,9 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
 	"os"
+	"sort"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -18,6 +22,8 @@ func main() {
 			fmt.Printf("Reverse Captcha for %s is %d\n", args[2], ReverseCaptcha(args[2]))
 		case 2:
 			fmt.Printf("Reverse Captcha for %s is %d\n", args[2], ReverseCaptchaHalfway(args[2]))
+		case 3:
+			fmt.Printf("Checksum for input spreadsheet is %d\n", SpreadsheetChecksum(args[2]))
 		default:
 			fmt.Println("Not done yet.")
 		}
@@ -44,7 +50,7 @@ func ReverseCaptcha(input string) int {
 	return sum
 }
 
-//ReverseCaptcha returns the sum of halfway repeat integers in a circular sequence
+//ReverseCaptchaHalfway returns the sum of halfway repeat integers in a circular sequence
 func ReverseCaptchaHalfway(input string) int {
 	sum := 0
 	for p, c := range input {
@@ -59,5 +65,34 @@ func ReverseCaptchaHalfway(input string) int {
 			sum += i
 		}
 	}
+	return sum
+}
+
+//SpreadsheetChecksum returns the sum of the differences of the highest and lowest values on each spreadsheet row
+func SpreadsheetChecksum(filename string) int {
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	sum := 0
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.Fields(scanner.Text())
+		ints := make([]int, len(line))
+		for i, s := range line {
+			ints[i], _ = strconv.Atoi(s)
+		}
+		sort.Ints(ints)
+		sum += (ints[len(ints)-1] - ints[0])
+		fmt.Println(ints, sum)
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
 	return sum
 }
